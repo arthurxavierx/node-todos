@@ -7,7 +7,7 @@ Todo = require './todo'
 # setup commander
 #
 program
-  .version('0.1.0')
+  .version('0.1.1')
   .option('-n, --name [name]', 'Set name')
   .option('-d, --date [date]', 'Set date')
   .option('-D, --done', 'Flag done TODOs')
@@ -71,7 +71,7 @@ program
 #
 # Load TODOs list from file
 #
-fs.readFile 'todos.json', (err, data) ->
+fs.readFile '~/todos.json', (err, data) ->
   if !err
     list = JSON.parse data
     for todo in list

@@ -51,7 +51,7 @@ class Todo
 
   # save TODOs list to a JSON file
   @save: ->
-    fs.writeFile 'todos.json', JSON.stringify(@all.map (e) -> e.toJSON()), (err) ->
+    fs.writeFile '~/todos.json', JSON.stringify(@all.map (e) -> e.toJSON()), (err) ->
       throw err if err
 
   #
