@@ -1,7 +1,7 @@
 {
   "name": "todos",
-  "version": "0.0.1",
-  "description": "Node application to manage a TODO's list",
+  "version": "0.1.0",
+  "description": "Node CLI application to manage a TODO's list",
   "author": "Arthur Xavier <arthur.xavierx@gmail.com>",
 
   "dependencies": {

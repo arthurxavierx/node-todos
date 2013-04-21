@@ -18,25 +18,33 @@ class Todo
       return (a.name > b.name) if (a.type == b.type) 
       (a.type > b.type)
     # show the list
+    console.log()
+
     for todo in @all
-      console.log "#{todo}"
+      console.log "\t#{todo}"
     #
     console.log "nothing to do".grey if @all.length < 1
 
+    console.log()
+
   # remove TODOs from list
   @remove: (options) ->
-    @all.forEach (todo, index) =>
-      if (options.name and todo.name.match(options.name)) or 
+    index = 0
+    while index < @all.length
+      todo = @all[index]
+      if (options.name and todo.name.match(new RegExp(options.name, 'i'))) or 
       (options.date and todo.date.format("DD/MM/YYYY").match(options.date)) or 
       (options.done and todo.done)
         #
         delete @all[index]
         @all.splice(index, 1)
+        index--
+      index++
 
   # set TODOs as done
   @done: (options) ->
     @all.forEach (todo) =>
-      if (options.name and todo.name.match(options.name)) or 
+      if (options.name and todo.name.match(new RegExp(options.name, 'i'))) or 
       (options.date and todo.date.format("DD/MM/YYYY").match(options.date))
         #
         todo.done = true
@@ -76,16 +84,21 @@ class Todo
     str = @name
     # if TODO has a type, add it to the string
     str = (if @type then "#{@type}: " else "") + str
+    # mark the TODO as done or not
+    symbol = (if @done then "✓ ".green else "✖ ".red)
+    # add the date to the end of the string
+    str += " - #{@date.format("DD/MM/YYYY")}" if @date
 
-    return str.strike.green if @done
+    # if the TODO is already done
+    return symbol + str.strike.green if @done
 
     # if TODO has a date, add it to the string
     if @date
-      str += " - #{@date.format("DD/MM/YYYY")}" 
-      return str.underline.red if @date.date() < Today.date()
-      return str.bold.yellow if @date.date() == Today.date()
-    # return the string
-    str
+      return symbol + str.bold.red if @date.date() < Today.date()
+      return symbol + str.bold.yellow if @date.date() == Today.date()
+
+    # return the final string
+    symbol + str
 
   toJSON: ->
     type: @type
