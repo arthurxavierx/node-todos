@@ -1,15 +1,18 @@
 #
 moment = require 'moment'
 colors = require 'colors'
+path = require 'path'
 fs = require 'fs'
 
 Today = moment()
+
 
 #
 # Todo class
 #
 class Todo
   @all: []
+  @file: path.join __dirname, '..', 'data', 'todos.json'
 
   # show TODOs list
   @show: ->
@@ -51,8 +54,18 @@ class Todo
 
   # save TODOs list to a JSON file
   @save: ->
-    fs.writeFile '~/todos.json', JSON.stringify(@all.map (e) -> e.toJSON()), (err) ->
+    fs.writeFile @file, JSON.stringify(@all.map (e) -> e.toJSON()), (err) ->
       throw err if err
+
+  @load: (callback) ->
+    fs.readFile @file, (err, data) ->
+      if !err
+        list = JSON.parse data
+        for todo in list
+          new Todo(todo)
+
+      callback()
+
 
   #
   constructor: (options = {}) ->

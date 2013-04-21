@@ -1,8 +1,21 @@
 {
   "name": "todos",
   "version": "0.1.1",
-  "description": "Node CLI application to manage a TODO's list",
   "author": "Arthur Xavier <arthur.xavierx@gmail.com>",
+  "description": "Node CLI application to manage a TODO's list",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arthur-xavier/node-todos.git"
+  },
+
+  "keywords": [
+    "cli",
+    "todo",
+    "todos",
+    "agenda",
+    "schedule"
+  ],
 
   "dependencies": {
     "commander": "~1.1.1",

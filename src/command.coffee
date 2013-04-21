@@ -71,12 +71,7 @@ program
 #
 # Load TODOs list from file
 #
-fs.readFile '~/todos.json', (err, data) ->
-  if !err
-    list = JSON.parse data
-    for todo in list
-      new Todo(todo)
-
+Todo.load ->
   #
   program
     .parse(process.argv)
