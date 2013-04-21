@@ -1,0 +1,178 @@
+#!/usr/bin/env node
+(function() {
+  var Today, Todo, colors, fs, moment, program;
+
+  program = require('commander');
+
+  colors = require('colors');
+
+  moment = require('moment');
+
+  fs = require('fs');
+
+  Today = moment();
+
+  Todo = (function() {
+    Todo.all = [];
+
+    Todo.show = function() {
+      var todo, _i, _len, _ref;
+
+      this.all.sort(function(a, b) {
+        if (a.type === b.type) {
+          return a.name > b.name;
+        }
+        return a.type > b.type;
+      });
+      _ref = this.all;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        todo = _ref[_i];
+        console.log("" + todo);
+      }
+      if (this.all.length < 1) {
+        return console.log("nothing to do".grey);
+      }
+    };
+
+    Todo.remove = function(options) {
+      var _this = this;
+
+      return this.all.forEach(function(todo, index) {
+        if ((options.name && todo.name.match(options.name)) || (options.date && todo.date.format("DD/MM/YYYY").match(options.date)) || (options.done && todo.done)) {
+          delete _this.all[index];
+          return _this.all.splice(index, 1);
+        }
+      });
+    };
+
+    Todo.done = function(options) {
+      var _this = this;
+
+      return this.all.forEach(function(todo) {
+        if ((options.name && todo.name.match(options.name)) || (options.date && todo.date.format("DD/MM/YYYY").match(options.date))) {
+          return todo.done = true;
+        }
+      });
+    };
+
+    Todo.save = function() {
+      return fs.writeFile('todos.json', JSON.stringify(this.all.map(function(e) {
+        return e.toJSON();
+      })), function(err) {
+        if (err) {
+          throw err;
+        }
+      });
+    };
+
+    function Todo(options) {
+      var _ref;
+
+      if (options == null) {
+        options = {};
+      }
+      this.type = options.type;
+      if (this.type) {
+        this.name = options.name;
+      } else {
+        _ref = options.name.split(':'), this.type = _ref[0], this.name = _ref[1];
+        this.name = this.name ? this.name.trim() : this.type;
+      }
+      if (options.date) {
+        this.date = moment(options.date, "DD-MM-YYYY");
+      }
+      this.done = options.done || false;
+      this.name = this.name.trim();
+      Todo.all.push(this);
+    }
+
+    Todo.prototype.toString = function() {
+      var str;
+
+      str = "" + this.type + ": " + this.name;
+      if (this.done) {
+        return str.strike.green;
+      }
+      if (this.date) {
+        str += " - " + (this.date.format("DD/MM/YYYY"));
+        if (this.date.date() < Today.date()) {
+          return str.underline.red;
+        }
+        if (this.date.date() === Today.date()) {
+          return str.bold.yellow;
+        }
+      }
+      return str;
+    };
+
+    Todo.prototype.toJSON = function() {
+      return {
+        type: this.type,
+        name: this.name,
+        date: this.date.format("DD/MM/YYYY"),
+        done: this.done
+      };
+    };
+
+    return Todo;
+
+  })();
+
+  program.version('0.0.1').option('-n, --name [name]', 'Set name').option('-d, --date [date]', 'Set date').option('-D, --done', 'Flag done TODOs').option('-U, --undone', 'Flag undone TODOs');
+
+  program.command('new').description('Creates a new TODO and add it to the list').action(function() {
+    if (program.name) {
+      new Todo({
+        name: program.name,
+        date: program.date
+      });
+    }
+    Todo.show();
+    return Todo.save();
+  });
+
+  program.command('remove').description('Remove TODOs from the list').action(function() {
+    Todo.remove({
+      name: program.name,
+      date: program.date,
+      done: program.done
+    });
+    Todo.show();
+    return Todo.save();
+  });
+
+  program.command('set').description('Set TODOs as done/undone').action(function(name) {
+    if (!program.done && !program.undone) {
+      console.log("Done/Undone flag not specified");
+      return;
+    }
+    Todo.done({
+      name: program.name,
+      date: program.date,
+      done: program.done || !program.undone
+    });
+    Todo.show();
+    return Todo.save();
+  });
+
+  program.command('clean').description('Remove done TODOs from the list');
+
+  program.command('*').description('Show the TODOs list').action(Todo.show);
+
+  fs.readFile('todos.json', function(err, data) {
+    var list, todo, _i, _len;
+
+    if (!err) {
+      list = JSON.parse(data);
+      for (_i = 0, _len = list.length; _i < _len; _i++) {
+        todo = list[_i];
+        new Todo(todo);
+      }
+    }
+    program.parse(process.argv);
+    if (process.argv.length <= 2) {
+      return Todo.show();
+    }
+  });
+
+}).call(this);

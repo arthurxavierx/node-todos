@@ -1,0 +1,21 @@
+{
+  "name": "todos",
+  "version": "0.0.1",
+  "description": "Node application to manage a TODO's list",
+  "author": "Arthur Xavier <arthur.xavierx@gmail.com>",
+
+  "dependencies": {
+    "commander": "~1.1.1",
+    "moment": "~2.0.0",
+    "colors": "~0.6.0"
+  },
+
+  "devDependencies": {
+    "coffee-script": "~1.6.2",
+    "uglify-js": "~2.2.5"
+  },
+
+  "bin": [
+    "bin/todos"
+  ]
+}
