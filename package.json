@@ -15,7 +15,7 @@
     "uglify-js": "~2.2.5"
   },
 
-  "bin": [
-    "bin/todos"
-  ]
+  "bin": {
+    "todos": "bin/todos"
+  }
 }

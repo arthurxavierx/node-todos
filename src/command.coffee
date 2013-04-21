@@ -1,12 +1,7 @@
 program = require 'commander'
-colors = require 'colors'
-moment = require 'moment'
 fs = require 'fs'
 
-Today = moment()
-
-# pre-processor include
-@include 'todo'
+Todo = require './todo'
 
 #
 # setup commander
