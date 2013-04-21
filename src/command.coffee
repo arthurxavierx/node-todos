@@ -7,7 +7,7 @@ Todo = require './todo'
 # setup commander
 #
 program
-  .version('0.1.1')
+  .version('0.1.3')
   .option('-n, --name [name]', 'Set name')
   .option('-d, --date [date]', 'Set date')
   .option('-D, --done', 'Flag done TODOs')
